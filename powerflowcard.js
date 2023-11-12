@@ -174,7 +174,7 @@ class PVPowerFlowCard extends HTMLElement {
         this.renderLine_Grid_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pgl);
         // PV-Grid:  Linie,Flow: wenn ppg>0
         if (ppg>0) this.renderLine_PV_Grid(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,ppg);
-        // Bat-Grid:  Linie,Flow: wenn pbg>0
+        // Bat-Grid:  Linie,Flow: wenn pbg!=0
         if (pbg!=0) this.renderLine_Bat_Grid(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pbg);
         // Bat-Load:  Linie,Flow: wenn pbl>0
         if (pbl>0) this.renderLine_Bat_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pbl);
@@ -318,25 +318,25 @@ class PVPowerFlowCard extends HTMLElement {
             if (step<18) return((dest=="right")?flowOffsetX+flowWidth/2+ld:flowOffsetX+flowWidth/2-ld);
             if (step>22) return((dest=="right")?flowOffsetX+flowWidth/2+ld+(step-20)*20:flowOffsetX+flowWidth/2-2*ld-(step-23)*20);
             var rad=90*(step-17)/6 * Math.PI / 180;
-            return((dest=="right")?flowOffsetX+flowWidth/2+ld+Math.sin(rad)*50:flowOffsetX+flowWidth/2-ld-Math.sin(rad)*50);
+            return((dest=="right")?flowOffsetX+flowWidth/2+ld+ld/2-Math.cos(rad)*ld/2:flowOffsetX+flowWidth/2-ld-ld/2+Math.cos(rad)*ld/2);
         }
         if (src=="left") {
             if (step<18) return(flowOffsetX+step*20);
             if (step>22) return(flowOffsetX+flowWidth/2-ld);
             var rad=90*(step-17)/6 * Math.PI / 180;
-            return(flowOffsetX+flowWidth/2-ld-Math.cos(rad)*50);
+            return(flowOffsetX+flowWidth/2-ld-ld/2+Math.sin(rad)*ld/2);
         }
         if (src=="right") {
             if (step<18) return(flowOffsetX+flowWidth-step*20);
             if (step>22) return(flowOffsetX+flowWidth/2+ld);
             var rad=90*(step-17)/6 * Math.PI / 180;
-            return(flowOffsetX+flowWidth/2+ld+Math.cos(rad)*50);
+            return(flowOffsetX+flowWidth/2+ld+ld/2-Math.sin(rad)*ld/2);
         }
         if (src=="down") {
             if (step<18) return((dest=="right")?flowOffsetX+flowWidth/2+ld:flowOffsetX+flowWidth/2-ld);
             if (step>22) return((dest=="right")?flowOffsetX+flowWidth/2+ld+(step-20)*20:flowOffsetX+flowWidth/2-2*ld-(step-23)*20);
             var rad=90*(step-17)/6 * Math.PI / 180;
-            return((dest=="right")?flowOffsetX+flowWidth/2+ld+Math.sin(rad)*50:flowOffsetX+flowWidth/2-ld-Math.sin(rad)*50);
+            return((dest=="right")?flowOffsetX+flowWidth/2+ld+ld/2-Math.cos(rad)*ld/2:flowOffsetX+flowWidth/2-ld-ld/2+Math.cos(rad)*ld/2);
         }
     }
     calcLineY(src,dest,step,flowOffsetY,flowHeight,ld) {
@@ -344,25 +344,25 @@ class PVPowerFlowCard extends HTMLElement {
             if (step<18) return(flowOffsetY+step*20);
             if (step>22) return(flowOffsetY+flowHeight/2-ld);
             var rad=90*(step-17)/6 * Math.PI / 180;
-            return(flowOffsetY+flowHeight/2-ld-Math.cos(rad)*50);
+            return(flowOffsetY+flowHeight/2-ld-ld/2+Math.sin(rad)*ld/2);
         }
         if (src=="left") {
             if (step<18) return((dest=="down")?flowOffsetY+flowHeight/2+ld:flowOffsetY+flowHeight/2-ld);
             if (step>22) return((dest=="down")?flowOffsetY+flowHeight/2+ld+(step-20)*20:flowOffsetY+flowHeight/2-2*ld-(step-23)*20);
             var rad=90*(step-17)/6 * Math.PI / 180;
-            return((dest=="down")?flowOffsetY+flowHeight/2+ld+Math.sin(rad)*50:flowOffsetY+flowHeight/2-ld-Math.sin(rad)*50);
+            return((dest=="down")?flowOffsetY+flowHeight/2+ld+ld/2-Math.cos(rad)*ld/2:flowOffsetY+flowHeight/2-ld-ld/2+Math.cos(rad)*ld/2);
         }
         if (src=="right") {
             if (step<18) return((dest=="down")?flowOffsetY+flowHeight/2+ld:flowOffsetY+flowHeight/2-ld);
             if (step>22) return((dest=="down")?flowOffsetY+flowHeight/2+ld+(step-20)*20:flowOffsetY+flowHeight/2-2*ld-(step-23)*20);
             var rad=90*(step-17)/6 * Math.PI / 180;
-            return((dest=="down")?flowOffsetY+flowHeight/2+ld+Math.sin(rad)*50:flowOffsetY+flowHeight/2-ld-Math.sin(rad)*50);
+            return((dest=="down")?flowOffsetY+flowHeight/2+ld+ld/2-Math.cos(rad)*ld/2:flowOffsetY+flowHeight/2-ld-ld/2+Math.cos(rad)*ld/2);
         }
         if (src=="down") {
             if (step<18) return(flowOffsetY+flowHeight-step*20);
             if (step>22) return(flowOffsetY+flowHeight/2+ld);
             var rad=90*(step-17)/6 * Math.PI / 180;
-            return(flowOffsetY+flowHeight/2+ld+Math.cos(rad)*50);
+            return(flowOffsetY+flowHeight/2+ld+ld/2-Math.sin(rad)*ld/2);
         }
     }
 
