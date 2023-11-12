@@ -167,21 +167,21 @@ class PVPowerFlowCard extends HTMLElement {
         }
 
         // PV-Load:  Linie: immer  Flow: wenn ppl>0
-        this.renderLine_PV_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,(ppl>0)?1:0);
+        this.renderLine_PV_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,ppl);
         // PV-Battery (nur, wenn Batterie vorhanden):  Linie: immer  Flow: wenn ppb>0
-        if (this.batPower!=undefined) this.renderLine_PV_Bat(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,(ppb>0)?1:0);
+        if (this.batPower!=undefined) this.renderLine_PV_Bat(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,ppb);
         // Grid-Load:  Linie: immer  Flow: wenn pgl>0
-        this.renderLine_Grid_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,(pgl>0)?1:0);
+        this.renderLine_Grid_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pgl);
         // PV-Grid:  Linie,Flow: wenn ppg>0
-        if (ppg>0) this.renderLine_PV_Grid(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,(ppg>0)?1:0);
+        if (ppg>0) this.renderLine_PV_Grid(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,ppg);
         // Bat-Grid:  Linie,Flow: wenn pbg>0
-        if (pbg!=0) this.renderLine_Bat_Grid(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,(pbg<0)?-1:(pbg>0)?1:0);
+        if (pbg!=0) this.renderLine_Bat_Grid(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pbg);
         // Bat-Load:  Linie,Flow: wenn pbl>0
-        if (pbl>0) this.renderLine_Bat_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,(pbl>0)?1:0);
+        if (pbl>0) this.renderLine_Bat_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pbl);
     }
 
     //*** gerade Linien ***
-    renderLine_PV_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,move) {
+    renderLine_PV_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
         ctx.lineWidth=15;
         var grad=ctx.createLinearGradient(flowOffsetX+flowWidth/2, flowOffsetY, flowOffsetX+flowWidth/2, flowOffsetY+flowHeight);
@@ -191,8 +191,9 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.moveTo(flowOffsetX+flowWidth/2, flowOffsetY);
         ctx.lineTo(flowOffsetX+flowWidth/2, flowOffsetY+flowHeight);
         ctx.stroke();
+        var move=(power>0)?1:0;
         if (move && move!=0) {
-            this.pos_PV_Load++;
+            this.pos_PV_Load=Math.min(50,this.pos_PV_Load+Math.max(2,Math.min(power,10))/5);
             var x=flowOffsetX+flowWidth/2;
             var y=((move>0)?flowOffsetY:flowOffsetY+flowHeight)+this.pos_PV_Load*20*move;
             if (this.pos_PV_Load>=50) {this.pos_PV_Load=0;}
@@ -200,7 +201,7 @@ class PVPowerFlowCard extends HTMLElement {
         }
         else this.pos_PV_Load=0;
     }
-    renderLine_Bat_Grid(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,move) {
+    renderLine_Bat_Grid(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
         ctx.lineWidth=15;
         var grad=ctx.createLinearGradient(flowOffsetX, flowOffsetY+flowHeight/2, flowOffsetX+flowWidth, flowOffsetY+flowHeight/2);
@@ -210,8 +211,10 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.moveTo(flowOffsetX, flowOffsetY+flowHeight/2);
         ctx.lineTo(flowOffsetX+flowWidth, flowOffsetY+flowHeight/2);
         ctx.stroke();
+        var move=(power<0)?-1:(power>0)?1:0; // kann in beide Richtungen !!
+        power=Math.abs(power);
         if (move && move!=0) {
-            this.pos_Bat_Grid++;
+            this.pos_Bat_Grid=Math.min(50,this.pos_Bat_Grid+Math.max(2,Math.min(power,10))/5);
             var y=flowOffsetY+flowHeight/2;
             var x=((move>0)?flowOffsetX:flowOffsetX+flowWidth)+this.pos_Bat_Grid*20*move;
             if (this.pos_Bat_Grid>=50) {this.pos_Bat_Grid=0;}
@@ -220,7 +223,7 @@ class PVPowerFlowCard extends HTMLElement {
         else this.pos_Bat_Grid=0;
     }
     //***  90-Grad-Linien ***
-    renderLine_PV_Bat(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,move) {
+    renderLine_PV_Bat(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
         ctx.lineWidth=15;
         var grad=ctx.createLinearGradient(flowOffsetX+flowWidth/2-ld, flowOffsetY, flowOffsetX, flowOffsetY+flowHeight/2-ld);
@@ -232,8 +235,9 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.arc(flowOffsetX+flowWidth/2-2*ld,flowOffsetY+flowHeight/2-2*ld,ld,0,0.5*Math.PI);
         ctx.lineTo(flowOffsetX, flowOffsetY+flowHeight/2-ld);
         ctx.stroke();
+        var move=(power>0)?1:0;
         if (move && move!=0)     {
-            this.pos_PV_Bat++;
+            this.pos_PV_Bat=Math.min(40,this.pos_PV_Bat+Math.max(2,Math.min(power,10))/5);
             var x=this.calcLineX((move>0)?"up":"left",(move>0)?"left":"up",this.pos_PV_Bat,flowOffsetX,flowWidth,ld);
             var y=this.calcLineY((move>0)?"up":"left",(move>0)?"left":"up",this.pos_PV_Bat,flowOffsetY,flowHeight,ld);
             if (this.pos_PV_Bat>=40) {this.pos_PV_Bat=0;}
@@ -241,7 +245,7 @@ class PVPowerFlowCard extends HTMLElement {
         }
         else this.pos_PV_Bat=0;
     }
-    renderLine_PV_Grid(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,move) {
+    renderLine_PV_Grid(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
         ctx.lineWidth=15;
         var grad=ctx.createLinearGradient(flowOffsetX+flowWidth/2+ld, flowOffsetY, flowOffsetX+flowWidth, flowOffsetY+flowHeight/2-ld);
@@ -253,8 +257,9 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.arc(flowOffsetX+flowWidth/2+2*ld,flowOffsetY+flowHeight/2-2*ld,ld,Math.PI,0.5*Math.PI,true);
         ctx.lineTo(flowOffsetX+flowWidth, flowOffsetY+flowHeight/2-ld);
         ctx.stroke();
+        var move=(power>0)?1:0;
         if (move && move!=0) {
-            this.pos_PV_Grid++;
+            this.pos_PV_Grid=Math.min(40,this.pos_PV_Grid+Math.max(2,Math.min(power,10))/5);
             var x=this.calcLineX((move>0)?"up":"right",(move>0)?"right":"up",this.pos_PV_Grid,flowOffsetX,flowWidth,ld);
             var y=this.calcLineY((move>0)?"up":"right",(move>0)?"right":"up",this.pos_PV_Grid,flowOffsetY,flowHeight,ld);
             if (this.pos_PV_Grid>=40) {this.pos_PV_Grid=0;}
@@ -262,7 +267,7 @@ class PVPowerFlowCard extends HTMLElement {
         }
         else this.pos_PV_Grid=0;
     }
-    renderLine_Grid_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,move) {
+    renderLine_Grid_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
         ctx.lineWidth=15;
         var grad=ctx.createLinearGradient(flowOffsetX+flowWidth, flowOffsetY+flowHeight/2+ld, flowOffsetX+flowWidth/2+ld, flowOffsetY+flowHeight);
@@ -274,8 +279,9 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.arc(flowOffsetX+flowWidth/2+2*ld,flowOffsetY+flowHeight/2+2*ld,ld,1.5*Math.PI,Math.PI,true);
         ctx.lineTo(flowOffsetX+flowWidth/2+ld, flowOffsetY+flowHeight);
         ctx.stroke();
+        var move=(power>0)?1:0;
         if (move && move!=0) {
-            this.pos_Grid_Load++;
+            this.pos_Grid_Load=Math.min(40,this.pos_Grid_Load+Math.max(2,Math.min(power,10))/5);
             var x=this.calcLineX((move>0)?"right":"down",(move>0)?"down":"right",this.pos_Grid_Load,flowOffsetX,flowWidth,ld);
             var y=this.calcLineY((move>0)?"right":"down",(move>0)?"down":"right",this.pos_Grid_Load,flowOffsetY,flowHeight,ld);
             if (this.pos_Grid_Load>=40) {this.pos_Grid_Load=0;}
@@ -284,7 +290,7 @@ class PVPowerFlowCard extends HTMLElement {
         }
         else this.pos_Grid_Load=0;
     }
-    renderLine_Bat_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,move) {
+    renderLine_Bat_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
         ctx.lineWidth=15;
         var grad=ctx.createLinearGradient(flowOffsetX, flowOffsetY+flowHeight/2+ld, flowOffsetX+flowWidth/2-ld, flowOffsetY+flowHeight);
@@ -296,8 +302,9 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.arc(flowOffsetX+flowWidth/2-2*ld,flowOffsetY+flowHeight/2+2*ld,ld,1.5*Math.PI,0);
         ctx.lineTo(flowOffsetX+flowWidth/2-ld, flowOffsetY+flowHeight);
         ctx.stroke();
+        var move=(power>0)?1:0;
         if (move && move!=0) {
-            this.pos_Bat_Load++;
+            this.pos_Bat_Load=Math.min(40,this.pos_Bat_Load+Math.max(2,Math.min(power,10))/5);
             var x=this.calcLineX((move>0)?"left":"down",(move>0)?"down":"left",this.pos_Bat_Load,flowOffsetX,flowWidth,ld);
             var y=this.calcLineY((move>0)?"left":"down",(move>0)?"down":"left",this.pos_Bat_Load,flowOffsetY,flowHeight,ld);
             if (this.pos_Bat_Load>=40) {this.pos_Bat_Load=0;}
