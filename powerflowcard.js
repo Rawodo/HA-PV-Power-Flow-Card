@@ -1,27 +1,3 @@
-//*****************************************************************************************
-//function to change to String
-//d:Anzahl der Nachkommastellen (ggf mit 0 angehängt)
-//dm und m: Stellenanzahl: 
-//   m: maximalen Stellenanzahl des gesamten Strings
-//   dm: Mindestanzahl der Nachkommastellen
-//   solange dm nicht unterschritten wird, wird der String auf m Stellen gekürzt
-//   sollte dies nicht möglich sein, wird der String länger. (dm bleibt also auf alle Fälle erhalten.
-function ToString(v,d,dm,m)
-  {
-   m=m||100;
-   v=v*1; //numerisch erzwingen (sonst gibts bei toFixed nen Fehler)
-   var vx=v;
-   var vk=1;
-   while (vx>=10) {vx/=10; vk++;}
-   var s=v.toFixed(d); 
-   if (d>0) // nur wenn es Nachkommastellen gibt, ggf anpassen
-     {
-      while (vk+d>m && dm<d) d--;
-      s=v.toFixed(d);
-     }
-   return(s);
-  }    
-
 
 class PVPowerFlowCard extends HTMLElement {
 
@@ -36,8 +12,8 @@ class PVPowerFlowCard extends HTMLElement {
     canvas; ctx;
     flowOffsetX; flowOffsetY;
     flowWidth; flowHeight;
-    ld=100; //line-distance
-    circleDiameter=600; //Durchmesser der Kreise
+    ld=10; //line-distance
+    circleDiameter=70; //Durchmesser der Kreise
 
     pos_PV_Load=0;
     pos_PV_Grid=0;
@@ -77,13 +53,14 @@ class PVPowerFlowCard extends HTMLElement {
             this.content = [1,2,3,4];
             //console.log("set hass once content: ",this.content);
             this.canvas=this.querySelector('canvas');
-            this.canvas.width=3000;
-            this.canvas.height=3000;
-            this.flowOffsetX=1000;
-            this.flowOffsetY=1000;
-            this.flowWidth=1000;
-            this.flowHeight=1000;
+            this.canvas.width=300;
+            this.canvas.height=300;
+            this.flowOffsetX=100;
+            this.flowOffsetY=100;
+            this.flowWidth=100;
+            this.flowHeight=100;
             this.ctx = this.canvas.getContext("2d");
+            this.ctx.scale(1.0,1.0);
             this.timer=setInterval(this.renderCanvas.bind(this),25);
             //console.log("set hass once thiscanvas: ",this.canvas);
         }
@@ -122,20 +99,20 @@ class PVPowerFlowCard extends HTMLElement {
     renderCanvas() {
         this.clearCanvas(this.canvas,this.ctx);
         this.renderCircle(this.ctx,this.flowOffsetX+this.flowWidth/2,this.flowOffsetY-this.circleDiameter/2,this.circleDiameter,"orange");
-        this.renderCircleName(this.ctx,"PV",this.flowOffsetX+this.flowWidth/2,this.flowOffsetY-this.circleDiameter-50);
+        this.renderCircleName(this.ctx,"PV",this.flowOffsetX+this.flowWidth/2,this.flowOffsetY-this.circleDiameter-5);
         this.renderCircleValue(this.ctx,this.pvPowerStr,this.flowOffsetX+this.flowWidth/2,this.flowOffsetY-this.circleDiameter/2);
         this.renderCircle(this.ctx,this.flowOffsetX+this.flowWidth/2,this.flowOffsetY+this.flowHeight+this.circleDiameter/2,this.circleDiameter,"blue");
-        this.renderCircleName(this.ctx,"Load",this.flowOffsetX+this.flowWidth/2,this.flowOffsetY+this.flowHeight+this.circleDiameter+150+50);
+        this.renderCircleName(this.ctx,"Load",this.flowOffsetX+this.flowWidth/2,this.flowOffsetY+this.flowHeight+this.circleDiameter+15+5);
         this.renderCircleValue(this.ctx,this.loadPowerStr,this.flowOffsetX+this.flowWidth/2,this.flowOffsetY+this.flowHeight+this.circleDiameter/2);
         if (this.batPower!=undefined) {
             this.renderCircle(this.ctx,this.flowOffsetX-this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2,this.circleDiameter,"green");
-            this.renderCircleName(this.ctx,"Battery",this.flowOffsetX-this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2+this.circleDiameter/2+150+50);
+            this.renderCircleName(this.ctx,"Battery",this.flowOffsetX-this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2+this.circleDiameter/2+15+5);
             this.renderCircleValue(this.ctx,this.batPowerStr,this.flowOffsetX-this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2);
             this.renderBatteryImage(this.ctx,this.flowOffsetX-this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2,this.circleDiameter);
             this.renderBatteryCapacity(this.ctx,this.batCapacityStr,this.flowOffsetX-this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2,this.circleDiameter);
         }
         this.renderCircle(this.ctx,this.flowOffsetX+this.flowWidth+this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2,this.circleDiameter,"gray");
-        this.renderCircleName(this.ctx,"Grid",this.flowOffsetX+this.flowWidth+this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2+this.circleDiameter/2+150+50);
+        this.renderCircleName(this.ctx,"Grid",this.flowOffsetX+this.flowWidth+this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2+this.circleDiameter/2+15+5);
         this.renderCircleValue(this.ctx,this.gridPowerStr,this.flowOffsetX+this.flowWidth+this.circleDiameter/2,this.flowOffsetY+this.flowHeight/2);
 
         // für jede Linie die einzelnen Power-Werte berechnen
@@ -174,7 +151,7 @@ class PVPowerFlowCard extends HTMLElement {
         this.renderLine_Grid_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pgl);
         // PV-Grid:  Linie,Flow: wenn ppg>0
         if (ppg>0) this.renderLine_PV_Grid(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,ppg);
-        // Bat-Grid:  Linie,Flow: wenn pbg!=0
+        // Bat-Grid:  Linie,Flow: wenn pbg>0
         if (pbg!=0) this.renderLine_Bat_Grid(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pbg);
         // Bat-Load:  Linie,Flow: wenn pbl>0
         if (pbl>0) this.renderLine_Bat_Load(this.ctx,this.flowOffsetX,this.flowWidth,this.flowOffsetY,this.flowHeight,this.ld,pbl);
@@ -183,7 +160,7 @@ class PVPowerFlowCard extends HTMLElement {
     //*** gerade Linien ***
     renderLine_PV_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
-        ctx.lineWidth=15;
+        ctx.lineWidth=2;
         var grad=ctx.createLinearGradient(flowOffsetX+flowWidth/2, flowOffsetY, flowOffsetX+flowWidth/2, flowOffsetY+flowHeight);
         grad.addColorStop(0, "orange");
         grad.addColorStop(1, "blue");
@@ -195,7 +172,7 @@ class PVPowerFlowCard extends HTMLElement {
         if (move && move!=0) {
             this.pos_PV_Load=Math.min(50,this.pos_PV_Load+Math.max(2,Math.min(power,10))/5);
             var x=flowOffsetX+flowWidth/2;
-            var y=((move>0)?flowOffsetY:flowOffsetY+flowHeight)+this.pos_PV_Load*20*move;
+            var y=((move>0)?flowOffsetY:flowOffsetY+flowHeight)+this.pos_PV_Load*2*move;
             if (this.pos_PV_Load>=50) {this.pos_PV_Load=0;}
             this.renderBubble(ctx,x,y);
         }
@@ -203,7 +180,7 @@ class PVPowerFlowCard extends HTMLElement {
     }
     renderLine_Bat_Grid(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
-        ctx.lineWidth=15;
+        ctx.lineWidth=2;
         var grad=ctx.createLinearGradient(flowOffsetX, flowOffsetY+flowHeight/2, flowOffsetX+flowWidth, flowOffsetY+flowHeight/2);
         grad.addColorStop(0, "green");
         grad.addColorStop(1, "gray");
@@ -216,7 +193,7 @@ class PVPowerFlowCard extends HTMLElement {
         if (move && move!=0) {
             this.pos_Bat_Grid=Math.min(50,this.pos_Bat_Grid+Math.max(2,Math.min(power,10))/5);
             var y=flowOffsetY+flowHeight/2;
-            var x=((move>0)?flowOffsetX:flowOffsetX+flowWidth)+this.pos_Bat_Grid*20*move;
+            var x=((move>0)?flowOffsetX:flowOffsetX+flowWidth)+this.pos_Bat_Grid*2*move;
             if (this.pos_Bat_Grid>=50) {this.pos_Bat_Grid=0;}
             this.renderBubble(ctx,x,y);
         }
@@ -225,7 +202,7 @@ class PVPowerFlowCard extends HTMLElement {
     //***  90-Grad-Linien ***
     renderLine_PV_Bat(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
-        ctx.lineWidth=15;
+        ctx.lineWidth=2;
         var grad=ctx.createLinearGradient(flowOffsetX+flowWidth/2-ld, flowOffsetY, flowOffsetX, flowOffsetY+flowHeight/2-ld);
         grad.addColorStop(0, "orange");
         grad.addColorStop(1, "green");
@@ -247,7 +224,7 @@ class PVPowerFlowCard extends HTMLElement {
     }
     renderLine_PV_Grid(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
-        ctx.lineWidth=15;
+        ctx.lineWidth=2;
         var grad=ctx.createLinearGradient(flowOffsetX+flowWidth/2+ld, flowOffsetY, flowOffsetX+flowWidth, flowOffsetY+flowHeight/2-ld);
         grad.addColorStop(0, "orange");
         grad.addColorStop(1, "gray");
@@ -269,7 +246,7 @@ class PVPowerFlowCard extends HTMLElement {
     }
     renderLine_Grid_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
-        ctx.lineWidth=15;
+        ctx.lineWidth=2;
         var grad=ctx.createLinearGradient(flowOffsetX+flowWidth, flowOffsetY+flowHeight/2+ld, flowOffsetX+flowWidth/2+ld, flowOffsetY+flowHeight);
         grad.addColorStop(0, "gray");
         grad.addColorStop(1, "blue");
@@ -292,7 +269,7 @@ class PVPowerFlowCard extends HTMLElement {
     }
     renderLine_Bat_Load(ctx,flowOffsetX,flowWidth,flowOffsetY,flowHeight,ld,power) {
         ctx.beginPath();
-        ctx.lineWidth=15;
+        ctx.lineWidth=2;
         var grad=ctx.createLinearGradient(flowOffsetX, flowOffsetY+flowHeight/2+ld, flowOffsetX+flowWidth/2-ld, flowOffsetY+flowHeight);
         grad.addColorStop(0, "green");
         grad.addColorStop(1, "blue");
@@ -316,50 +293,50 @@ class PVPowerFlowCard extends HTMLElement {
     calcLineX(src,dest,step,flowOffsetX,flowWidth,ld) {
         if (src=="up") {
             if (step<18) return((dest=="right")?flowOffsetX+flowWidth/2+ld:flowOffsetX+flowWidth/2-ld);
-            if (step>22) return((dest=="right")?flowOffsetX+flowWidth/2+ld+(step-20)*20:flowOffsetX+flowWidth/2-ld-(step-20)*20);
+            if (step>22) return((dest=="right")?flowOffsetX+flowWidth/2+ld+(step-20)*2:flowOffsetX+flowWidth/2-ld-(step-20)*2);
             var rad=90*(step-17)/6 * Math.PI / 180;
             return((dest=="right")?flowOffsetX+flowWidth/2+ld+ld/2-Math.cos(rad)*ld/2:flowOffsetX+flowWidth/2-ld-ld/2+Math.cos(rad)*ld/2);
         }
         if (src=="left") {
-            if (step<18) return(flowOffsetX+step*20);
+            if (step<18) return(flowOffsetX+step*2);
             if (step>22) return(flowOffsetX+flowWidth/2-ld);
             var rad=90*(step-17)/6 * Math.PI / 180;
             return(flowOffsetX+flowWidth/2-ld-ld/2+Math.sin(rad)*ld/2);
         }
         if (src=="right") {
-            if (step<18) return(flowOffsetX+flowWidth-step*20);
+            if (step<18) return(flowOffsetX+flowWidth-step*2);
             if (step>22) return(flowOffsetX+flowWidth/2+ld);
             var rad=90*(step-17)/6 * Math.PI / 180;
             return(flowOffsetX+flowWidth/2+ld+ld/2-Math.sin(rad)*ld/2);
         }
         if (src=="down") {
             if (step<18) return((dest=="right")?flowOffsetX+flowWidth/2+ld:flowOffsetX+flowWidth/2-ld);
-            if (step>22) return((dest=="right")?flowOffsetX+flowWidth/2+ld+(step-20)*20:flowOffsetX+flowWidth/2-ld-(step-20)*20);
+            if (step>22) return((dest=="right")?flowOffsetX+flowWidth/2+ld+(step-20)*2:flowOffsetX+flowWidth/2-ld-(step-20)*2);
             var rad=90*(step-17)/6 * Math.PI / 180;
             return((dest=="right")?flowOffsetX+flowWidth/2+ld+ld/2-Math.cos(rad)*ld/2:flowOffsetX+flowWidth/2-ld-ld/2+Math.cos(rad)*ld/2);
         }
     }
     calcLineY(src,dest,step,flowOffsetY,flowHeight,ld) {
         if (src=="up") {
-            if (step<18) return(flowOffsetY+step*20);
+            if (step<18) return(flowOffsetY+step*2);
             if (step>22) return(flowOffsetY+flowHeight/2-ld);
             var rad=90*(step-17)/6 * Math.PI / 180;
             return(flowOffsetY+flowHeight/2-ld-ld/2+Math.sin(rad)*ld/2);
         }
         if (src=="left") {
             if (step<18) return((dest=="down")?flowOffsetY+flowHeight/2+ld:flowOffsetY+flowHeight/2-ld);
-            if (step>22) return((dest=="down")?flowOffsetY+flowHeight/2+ld+(step-20)*20:flowOffsetY+flowHeight/2-ld-(step-20)*20);
+            if (step>22) return((dest=="down")?flowOffsetY+flowHeight/2+ld+(step-20)*2:flowOffsetY+flowHeight/2-ld-(step-20)*2);
             var rad=90*(step-17)/6 * Math.PI / 180;
             return((dest=="down")?flowOffsetY+flowHeight/2+ld+ld/2-Math.cos(rad)*ld/2:flowOffsetY+flowHeight/2-ld-ld/2+Math.cos(rad)*ld/2);
         }
         if (src=="right") {
             if (step<18) return((dest=="down")?flowOffsetY+flowHeight/2+ld:flowOffsetY+flowHeight/2-ld);
-            if (step>22) return((dest=="down")?flowOffsetY+flowHeight/2+ld+(step-20)*20:flowOffsetY+flowHeight/2-ld-(step-20)*20);
+            if (step>22) return((dest=="down")?flowOffsetY+flowHeight/2+ld+(step-20)*2:flowOffsetY+flowHeight/2-ld-(step-20)*2);
             var rad=90*(step-17)/6 * Math.PI / 180;
             return((dest=="down")?flowOffsetY+flowHeight/2+ld+ld/2-Math.cos(rad)*ld/2:flowOffsetY+flowHeight/2-ld-ld/2+Math.cos(rad)*ld/2);
         }
         if (src=="down") {
-            if (step<18) return(flowOffsetY+flowHeight-step*20);
+            if (step<18) return(flowOffsetY+flowHeight-step*2);
             if (step>22) return(flowOffsetY+flowHeight/2+ld);
             var rad=90*(step-17)/6 * Math.PI / 180;
             return(flowOffsetY+flowHeight/2+ld+ld/2-Math.sin(rad)*ld/2);
@@ -377,7 +354,7 @@ class PVPowerFlowCard extends HTMLElement {
     renderCircle(ctx,x,y,dia,col) {
         col=col || "orange";
         ctx.beginPath();
-        ctx.lineWidth=20;
+        ctx.lineWidth=2;
         ctx.strokeStyle=col;
         ctx.arc(x,y,dia/2,0,2*Math.PI);
         ctx.stroke();
@@ -385,7 +362,7 @@ class PVPowerFlowCard extends HTMLElement {
     renderCircleName(ctx,text,x,y,col) {
         col=col || "black";
         ctx.beginPath();
-        ctx.font = "160px Arial";
+        ctx.font = "20px Arial";
         ctx.fillStyle = col;
         ctx.textAlign = "center";
         ctx.fillText(text, x, y); 
@@ -393,19 +370,19 @@ class PVPowerFlowCard extends HTMLElement {
     renderCircleValue(ctx,text,x,y,col) {
         col=col || "black";
         ctx.beginPath();
-        ctx.font = "140px Arial";
+        ctx.font = "18px Arial";
         ctx.fillStyle = col;
         ctx.textAlign = "center";
-        ctx.fillText(text, x, y+70); 
-        ctx.font = "100px Arial";
-        ctx.fillText("kW", x, y+200); 
+        ctx.fillText(text, x, y+9); 
+        ctx.font = "12px Arial";
+        ctx.fillText("kW", x, y+24); 
     }
     renderBubble(ctx,x,y,col) {
         col=col || "violet";
         ctx.beginPath();
         ctx.lineWidth=2;
         ctx.fillStyle=col;
-        ctx.arc(x,y,40,0,2*Math.PI);
+        ctx.arc(x,y,4,0,2*Math.PI);
         ctx.fill();
     }
     renderBatteryImage(ctx,x,y,dia,col) {
@@ -413,24 +390,41 @@ class PVPowerFlowCard extends HTMLElement {
         dia/=10;
         x-=2.5*dia; y-=1.5*dia;
         ctx.beginPath();
-        ctx.lineWidth=10;
+        ctx.lineWidth=1;
         ctx.strokeStyle=col;
         ctx.rect(x,y,5*dia,-2*dia);
-        ctx.rect(x+5*dia,y-0.5*dia,30,-1*dia);
+        ctx.fillRect(x+5*dia,y-0.5*dia,3,-1*dia);
         ctx.stroke();
     }
     renderBatteryCapacity(ctx,text,x,y,dia,col) {
         col=col || "black";
         dia/=10;
-        y-=2*dia-5;
+        y-=2*dia;
         ctx.beginPath();
-        ctx.font = "100px Arial";
+        ctx.font = "10px Arial";
         ctx.fillStyle = col;
         ctx.textAlign = "center";
         ctx.fillText(text+"%", x, y); 
     }
 
 }
+
+function ToString(v,d,dm,m)
+  {
+   m=m||100;
+   v=v*1; //numerisch erzwingen (sonst gibts bei toFixed nen Fehler)
+   var vx=v;
+   var vk=1;
+   while (vx>=10) {vx/=10; vk++;}
+   var s=v.toFixed(d); 
+   if (d>0) // nur wenn es Nachkommastellen gibt, ggf anpassen
+     {
+      while (vk+d>m && dm<d) d--;
+      s=v.toFixed(d);
+     }
+   return(s);
+  }    
+
 
 customElements.define('pv-power-flow-card', PVPowerFlowCard);
 
