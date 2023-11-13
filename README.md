@@ -1,8 +1,8 @@
 HomeAssistant-PV-Power-Flow-Card
 (Nach dem Vorbild der Huawei-Fusion-Solar-App)
 
-![grafik](https://github.com/Rawodo/HA-PV-Power-Flow-Card/assets/149597861/daa1f86f-fc2c-411b-aa4c-004c406012b0)
-![grafik](https://github.com/Rawodo/HA-PV-Power-Flow-Card/assets/149597861/90abe00a-d7cd-4d56-b6f8-748f7147dcb1)
+![grafik](Bilder/Flow.png)
+![grafik](Bilder/Params.png)
 
 Die Karte hat 4 Parameter:
 - PV: Leistung der Module (nur positiv, 0-...) in kW
