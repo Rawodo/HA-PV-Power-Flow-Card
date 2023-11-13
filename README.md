@@ -1,8 +1,8 @@
 HomeAssistant-PV-Power-Flow-Card
 (Nach dem Vorbild der Huawei-Fusion-Solar-App)
 
-![grafik](Bilder/Flow.PNG)
 ![grafik](Bilder/Params.PNG)
+![grafik](Bilder/Flow.PNG)
 
 Die Karte hat 4 Parameter:
 - PV: Leistung der Module (nur positiv, 0-...) in kW
@@ -19,10 +19,10 @@ Installation:
 - in HA Resource hinzufügen:
   - Einstellungen -> Dashboards -> Resourcen (die drei Punkte rechts oben) -> Resource hinzufügen
   - "/local/powerflowcard.js" als Javascript-Modul eintragen
-  - ![grafik](https://github.com/Rawodo/HA-PV-Power-Flow-Card/assets/149597861/0c66908a-9446-4f64-af0f-7b74768d93af)
+  - ![grafik](Resource.PNG)
 - Seite neu laden (im Browser)
 - die Karte sollte dann in der Liste der installierbaren Karten auftauchen (Dashboard bearbeiten, Karte hinzufügen)
-- ![grafik](https://github.com/Rawodo/HA-PV-Power-Flow-Card/assets/149597861/43c46454-d888-4ede-8773-50f281f85f3e)
+- ![grafik](Card.PNG)
 
 
 
