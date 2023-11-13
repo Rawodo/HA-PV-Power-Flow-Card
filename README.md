@@ -19,10 +19,10 @@ Installation:
 - in HA Resource hinzufügen:
   - Einstellungen -> Dashboards -> Resourcen (die drei Punkte rechts oben) -> Resource hinzufügen
   - "/local/powerflowcard.js" als Javascript-Modul eintragen
-  - ![grafik](Resource.PNG)
+  - ![grafik](Bilder/Resource.PNG)
 - Seite neu laden (im Browser)
 - die Karte sollte dann in der Liste der installierbaren Karten auftauchen (Dashboard bearbeiten, Karte hinzufügen)
-- ![grafik](Card.PNG)
+- ![grafik](Bilder/Card.PNG)
 
 
 
