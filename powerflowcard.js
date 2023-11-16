@@ -170,7 +170,7 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.stroke();
         var move=(power>0)?1:0;
         if (move && move!=0) {
-            this.pos_PV_Load=Math.min(50,this.pos_PV_Load+Math.max(2,Math.min(power,10))/5);
+            this.pos_PV_Load=Math.min(50,this.pos_PV_Load+0.5+(power/5));
             var x=flowOffsetX+flowWidth/2;
             var y=((move>0)?flowOffsetY:flowOffsetY+flowHeight)+this.pos_PV_Load*2*move;
             if (this.pos_PV_Load>=50) {this.pos_PV_Load=0;}
@@ -191,7 +191,7 @@ class PVPowerFlowCard extends HTMLElement {
         var move=(power<0)?-1:(power>0)?1:0; // kann in beide Richtungen !!
         power=Math.abs(power);
         if (move && move!=0) {
-            this.pos_Bat_Grid=Math.min(50,this.pos_Bat_Grid+Math.max(2,Math.min(power,10))/5);
+            this.pos_Bat_Grid=Math.min(50,this.pos_Bat_Grid+0.5+(power/5));
             var y=flowOffsetY+flowHeight/2;
             var x=((move>0)?flowOffsetX:flowOffsetX+flowWidth)+this.pos_Bat_Grid*2*move;
             if (this.pos_Bat_Grid>=50) {this.pos_Bat_Grid=0;}
@@ -214,7 +214,7 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.stroke();
         var move=(power>0)?1:0;
         if (move && move!=0)     {
-            this.pos_PV_Bat=Math.min(40,this.pos_PV_Bat+Math.max(2,Math.min(power,10))/5);
+            this.pos_PV_Bat=Math.min(40,this.pos_PV_Bat+0.5+(power/5));
             var x=this.calcLineX((move>0)?"up":"left",(move>0)?"left":"up",this.pos_PV_Bat,flowOffsetX,flowWidth,ld);
             var y=this.calcLineY((move>0)?"up":"left",(move>0)?"left":"up",this.pos_PV_Bat,flowOffsetY,flowHeight,ld);
             if (this.pos_PV_Bat>=40) {this.pos_PV_Bat=0;}
@@ -236,7 +236,7 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.stroke();
         var move=(power>0)?1:0;
         if (move && move!=0) {
-            this.pos_PV_Grid=Math.min(40,this.pos_PV_Grid+Math.max(2,Math.min(power,10))/5);
+            this.pos_PV_Grid=Math.min(40,this.pos_PV_Grid+0.5+(power/5));
             var x=this.calcLineX((move>0)?"up":"right",(move>0)?"right":"up",this.pos_PV_Grid,flowOffsetX,flowWidth,ld);
             var y=this.calcLineY((move>0)?"up":"right",(move>0)?"right":"up",this.pos_PV_Grid,flowOffsetY,flowHeight,ld);
             if (this.pos_PV_Grid>=40) {this.pos_PV_Grid=0;}
@@ -258,7 +258,7 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.stroke();
         var move=(power>0)?1:0;
         if (move && move!=0) {
-            this.pos_Grid_Load=Math.min(40,this.pos_Grid_Load+Math.max(2,Math.min(power,10))/5);
+            this.pos_Grid_Load=Math.min(40,this.pos_Grid_Load+0.5+(power/5));
             var x=this.calcLineX((move>0)?"right":"down",(move>0)?"down":"right",this.pos_Grid_Load,flowOffsetX,flowWidth,ld);
             var y=this.calcLineY((move>0)?"right":"down",(move>0)?"down":"right",this.pos_Grid_Load,flowOffsetY,flowHeight,ld);
             if (this.pos_Grid_Load>=40) {this.pos_Grid_Load=0;}
@@ -281,7 +281,7 @@ class PVPowerFlowCard extends HTMLElement {
         ctx.stroke();
         var move=(power>0)?1:0;
         if (move && move!=0) {
-            this.pos_Bat_Load=Math.min(40,this.pos_Bat_Load+Math.max(2,Math.min(power,10))/5);
+            this.pos_Bat_Load=Math.min(40,this.pos_Bat_Load+0.5+(power/5));
             var x=this.calcLineX((move>0)?"left":"down",(move>0)?"down":"left",this.pos_Bat_Load,flowOffsetX,flowWidth,ld);
             var y=this.calcLineY((move>0)?"left":"down",(move>0)?"down":"left",this.pos_Bat_Load,flowOffsetY,flowHeight,ld);
             if (this.pos_Bat_Load>=40) {this.pos_Bat_Load=0;}
